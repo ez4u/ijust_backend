@@ -18,4 +18,7 @@ After cloning, run these commands to install requirements and create database ta
 
     python script.py -r
 
+### Apidoc url:
+
+	/apidocs/index.html
 
