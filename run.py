@@ -17,7 +17,7 @@ venv_dir = os.path.join(fwpath, 'venv')
 
 
 def get_parser():
-	parser = argparse.ArgumentParser(description='Project')
+	parser = argparse.ArgumentParser(description='ijust project')
 	# Add arguments
 	parser.add_argument(
 			'-r', '--run', help='run server', required=False, action='store_true')
@@ -27,6 +27,10 @@ def get_parser():
 			'-cf', '--config-file', help='import local config file', metavar='CONFIG_FILE', dest='conf_file', required=False, type=str, nargs=1)
 	parser.add_argument(
 			'-u', '--update', help='update requirements', required=False, action='store_true')
+	parser.add_argument(
+			'-crdb', '--create-database', help='create database', required=False, action='store_true')
+	parser.add_argument(
+			'-drdb', '--drop-database', help='create database', required=False, action='store_true')
 	return parser
 
 
@@ -54,6 +58,21 @@ def update_requirements():
 	subprocess.call([os.path.join(venv_dir, 'bin/pip'), 'install', '-r', os.path.join(fwpath, 'requirements')])
 
 
+def create_database():
+	from project import app
+	from project.extensions import db
+	with app.app_context():
+		db.create_all()
+		db.session.commit()
+
+
+def drop_database():
+	from project import app
+	from project.extensions import db
+	with app.app_context():
+		db.drop_all()
+		db.session.commit()
+
 
 if __name__ == '__main__':
 	parser = get_parser()
@@ -61,6 +80,10 @@ if __name__ == '__main__':
 
 	if args.update:
 		update_requirements()
+	elif args.create_database:
+		create_database()
+	elif args.drop_database:
+		drop_database()
 
 	elif args.run:
 		# project imports
