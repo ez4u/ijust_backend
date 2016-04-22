@@ -1,0 +1,7 @@
+.idea/
+*.pyc
+*~
+venv/
+project/data
+project/conf.py
+.cache
