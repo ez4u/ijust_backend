@@ -47,9 +47,9 @@ def validate_schema(schema_name, api=False):
 						update(errors, main)
 					return errors
 
-				if app.config['TESTING']:
-					return jsonify(errors=get_errors()), 406
-				return '', 406
+				if app.config['DEBUG']:
+					return jsonify(errors=get_errors()), 400
+				return '', 400
 
 			return f(*args, **kwargs)
 		return decorated
