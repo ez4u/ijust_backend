@@ -79,12 +79,13 @@ def login():
         schema:
           id: Login
           required:
-            - username
+            - login
             - password
           properties:
-            username:
+            login:
               type: string
               example: babyknight
+              description: Username or Email
             password:
               type: string
               example: baby123
@@ -96,7 +97,7 @@ def login():
           properties:
             token:
               type: string
-              description: Generated token for user
+              description: Generated RESTful token
       400:
       	description: Bad request
       404:
@@ -106,10 +107,13 @@ def login():
 	"""
 
 	data = request.json
-	username = data['username']
+	login = data['login']
 	password = data['password']
 
-	user_obj = User.query.filter_by(username=username).first()
+	if '@' in login:
+		user_obj = User.query.filter_by(email=login).first()
+	else:
+		user_obj = User.query.filter_by(username=login).first()
 	if not user_obj:
 		return jsonify(errors='user does not exist'), 404
 	if user_obj.verify_password(password):
