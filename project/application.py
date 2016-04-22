@@ -4,7 +4,7 @@ from flask import Flask
 
 
 def create_app(config):
-	app = Flask(config.DEFAULT_APP_NAME)
+	app = Flask(config.DEFAULT_APP_NAME, template_folder='project/templates', static_folder='project/static')
 	configure_app(app, config)
 	configure_extensions(app)
 	append_decorators(app)
