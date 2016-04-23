@@ -51,7 +51,7 @@ def get_user_info():
               type: string
               description: Lastname of current user
       401:
-        description: Token not found or is invalid or has expired
+        description: Token is invalid or has expired
 	"""
 
 	user_obj = User.query.get(int(g.token_data))
@@ -208,7 +208,7 @@ def logout():
       200:
         description: Successfully logged out
       401:
-        description: Token not found or is invalid or has expired
+        description: Token is invalid or has expired
     """
 
     expire_token()

@@ -11,6 +11,7 @@ from redis import Redis
 # project imports
 from project import app
 
+
 redis = Redis()
 
 
@@ -29,7 +30,7 @@ def login_required(f):
 	def decorated(*args, **kwargs):
 
 		if not 'TOKEN' in request.headers:
-			return jsonify(errors='token not found'), 401
+			return jsonify(errors='set token to access protected routes'), 401
 
 		token = request.headers['TOKEN']
 		token_data = redis.get(token)
