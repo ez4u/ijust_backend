@@ -185,3 +185,32 @@ def signup():
 
 	return '', 201
 
+
+###############################  Logout  ####################################
+#############################################################################
+
+
+@app.api_route('/user/logout/', methods=['POST'])
+@login_required
+def logout():
+    """
+    Logout
+    ---
+    tags:
+      - user
+    parameters:
+      - name: TOKEN
+        in: header
+        type: string
+        required: true
+        description: Token of current user
+    responses:
+      200:
+        description: Successfully logged out
+      401:
+        description: Token not found or is invalid or has expired
+    """
+
+    expire_token()
+    return '', 200
+
