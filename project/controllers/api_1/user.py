@@ -2,7 +2,7 @@
 
 # project imports
 from project import app
-from project.utils.auth import login_required, generate_token
+from project.utils.auth import login_required, generate_token, expire_token
 from project.utils.validators import api_validate_schema
 
 from project.extensions import db
@@ -54,7 +54,7 @@ def get_user_info():
         description: Token not found or is invalid or has expired
 	"""
 
-	user_obj = User.query.get(g.token_data['id'])
+	user_obj = User.query.get(int(g.token_data))
 	return jsonify(user_obj.to_json()), 200
 
 
@@ -117,7 +117,7 @@ def login():
 	if not user_obj:
 		return jsonify(errors='user does not exist'), 404
 	if user_obj.verify_password(password):
-		return jsonify(token=generate_token(dict(id=user_obj.id))), 200
+		return jsonify(token=generate_token(user_obj.id)), 200
 	return jsonify(errors='wrong password'), 406
 
 
