@@ -22,7 +22,7 @@ from sqlalchemy.exc import IntegrityError
 
 @app.api_route('/user/', methods=['GET'])
 @login_required
-def get_user_info():
+def get_current_user_info():
 	"""
     Get Current User Info
     Get basic information of current user
@@ -55,6 +55,47 @@ def get_user_info():
 	"""
 
 	user_obj = User.query.get(g.token_data['user_id'])
+	return jsonify(user_obj.to_json()), 200
+
+
+#############################################################################
+
+
+@app.api_route('/user/<string:username>/', methods=['GET'])
+def get_user_info(username):
+	"""
+    Get An User Info
+    Get basic information of an user
+    ---
+    tags:
+      - user
+    parameters:
+      - name: username
+        in: path
+        type: string
+        required: true
+    responses:
+      200:
+        description: Current user basic information
+        schema:
+          type: object
+          properties:
+            email:
+              type: string
+              description: Email of current user
+            firstname:
+              type: string
+              description: Firstname of current user
+            lastname:
+              type: string
+              description: Lastname of current user
+      404:
+        description: User does not exist
+	"""
+
+	user_obj = User.query.filter_by(username=username).first()
+	if not user_obj:
+		return jsonify(errors='user does not exist'), 404
 	return jsonify(user_obj.to_json()), 200
 
 
@@ -159,6 +200,7 @@ def signup():
             password:
               type: string
               example: baby123
+              minLength: 3
               maxLength: 32
     responses:
       201:
