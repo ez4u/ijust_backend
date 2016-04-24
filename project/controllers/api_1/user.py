@@ -54,7 +54,7 @@ def get_user_info():
         description: Token is invalid or has expired
 	"""
 
-	user_obj = User.query.get(int(g.token_data))
+	user_obj = User.query.get(g.token_data['user_id'])
 	return jsonify(user_obj.to_json()), 200
 
 
@@ -114,10 +114,12 @@ def login():
 		user_obj = User.query.filter_by(email=login).first()
 	else:
 		user_obj = User.query.filter_by(username=login).first()
+
 	if not user_obj:
 		return jsonify(errors='user does not exist'), 404
 	if user_obj.verify_password(password):
-		return jsonify(token=generate_token(user_obj.id)), 200
+		return jsonify(token=generate_token(dict(user_id=user_obj.id))), 200
+
 	return jsonify(errors='wrong password'), 406
 
 
