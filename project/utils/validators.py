@@ -50,6 +50,8 @@ def validate_schema(schema_name, api=False):
 				if app.config['DEBUG']:
 					return jsonify(errors=get_errors()), 400
 				return '', 400
+			if not len(json):
+				return '', 400
 
 			return f(*args, **kwargs)
 		return decorated
