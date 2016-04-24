@@ -258,3 +258,80 @@ def logout():
     expire_token()
     return '', 200
 
+
+################################  Edit  #####################################
+#############################################################################
+
+
+@app.api_route('/user/', methods=['PUT'])
+@api_validate_schema('user.edit_schema')
+@login_required
+def edit():
+	"""
+    Edit Current User Profile
+    ---
+    tags:
+      - user
+    parameters:
+      - name: TOKEN
+        in: header
+        type: string
+        required: true
+        description: Token of current user
+      - name: body
+        in: body
+        type: object
+        required: true
+        schema:
+          id: EditUser
+          properties:
+            firstname:
+              type: string
+              example: newbaby
+              maxLength: 32
+            lastname:
+              type: string
+              example: newknight
+              maxLength: 32
+            password:
+              type: object
+              schema:
+                id: Password
+                properties:
+	            old:
+	              type: string
+	              example: baby123
+	              minLength: 3
+	              maxLength: 32
+	            new:
+	              type: string
+	              example: baby321
+	              minLength: 3
+	              maxLength: 32
+    responses:
+      200:
+        description: Successfully edited
+      400:
+      	description: Bad request
+      406:
+      	description: Not acceptable
+	"""
+
+	data = request.json
+	user_obj = User.query.get(g.token_data['user_id'])
+
+	if 'password' in data:
+		old = data['password']['old']
+		new = data['password']['new']
+		data.pop('password')
+
+		if not user_obj.verify_password(old):
+			return '', 406
+		user_obj.hash_password(new)
+
+	if len(data):
+		user_obj.query.update(data)
+	db.session.commit()
+
+	return '', 200
+
