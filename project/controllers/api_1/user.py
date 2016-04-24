@@ -22,10 +22,9 @@ from sqlalchemy.exc import IntegrityError
 
 @app.api_route('/user/', methods=['GET'])
 @login_required
-def get_current_user_info():
+def get_current_user_profile():
 	"""
-    Get Current User Info
-    Get basic information of current user
+    Get Current User Profile
     ---
     tags:
       - user
@@ -37,8 +36,9 @@ def get_current_user_info():
         description: Token of current user
     responses:
       200:
-        description: Current user basic information
+        description: Current user profile
         schema:
+          id: UserProfile
           type: object
           properties:
             email:
@@ -62,10 +62,9 @@ def get_current_user_info():
 
 
 @app.api_route('/user/<string:username>/', methods=['GET'])
-def get_user_info(username):
+def get_user_profile(username):
 	"""
-    Get An User Info
-    Get basic information of an user
+    Get An User Profile
     ---
     tags:
       - user
@@ -76,8 +75,9 @@ def get_user_info(username):
         required: true
     responses:
       200:
-        description: Current user basic information
+        description: User profile
         schema:
+          id: UserProfile
           type: object
           properties:
             email:
@@ -118,7 +118,7 @@ def login():
         description: username and password for login
         required: true
         schema:
-          id: Login
+          id: UserLogin
           required:
             - login
             - password
@@ -183,7 +183,7 @@ def signup():
         description: username, email and password for signup
         required: true
         schema:
-          id: Signup
+          id: UserSignup
           required:
             - username
             - email
@@ -283,7 +283,7 @@ def edit():
         type: object
         required: true
         schema:
-          id: EditUser
+          id: UserEdit
           properties:
             firstname:
               type: string
@@ -296,18 +296,17 @@ def edit():
             password:
               type: object
               schema:
-                id: Password
                 properties:
-	            old:
-	              type: string
-	              example: baby123
-	              minLength: 3
-	              maxLength: 32
-	            new:
-	              type: string
-	              example: baby321
-	              minLength: 3
-	              maxLength: 32
+    	            old:
+    	              type: string
+    	              example: baby123
+    	              minLength: 3
+    	              maxLength: 32
+    	            new:
+    	              type: string
+    	              example: baby321
+    	              minLength: 3
+    	              maxLength: 32
     responses:
       200:
         description: Successfully edited
