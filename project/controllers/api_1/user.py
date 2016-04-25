@@ -77,18 +77,7 @@ def get_user_profile(username):
       200:
         description: User profile
         schema:
-          id: UserProfile
-          type: object
-          properties:
-            email:
-              type: string
-              description: Email of current user
-            firstname:
-              type: string
-              description: Firstname of current user
-            lastname:
-              type: string
-              description: Lastname of current user
+          $ref: "#/definitions/api_1_user_get_current_user_profile_get_UserProfile"
       404:
         description: User does not exist
 	"""
@@ -114,7 +103,6 @@ def login():
     parameters:
       - name: body
         in: body
-        type: object
         description: username and password for login
         required: true
         schema:
@@ -179,7 +167,6 @@ def signup():
     parameters:
       - name: body
         in: body
-        type: object
         description: username, email and password for signup
         required: true
         schema:
@@ -280,7 +267,6 @@ def edit():
         description: Token of current user
       - name: body
         in: body
-        type: object
         required: true
         schema:
           id: UserEdit
@@ -294,8 +280,8 @@ def edit():
               example: newknight
               maxLength: 32
             password:
-              type: object
               schema:
+                id: UserChangePassword
                 properties:
     	            old:
     	              type: string
