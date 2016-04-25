@@ -7,6 +7,8 @@ import os
 
 
 data_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'data')
+if not os.path.exists(data_dir):
+	os.mkdir(data_dir)
 
 
 class DefaultConfig(object):
