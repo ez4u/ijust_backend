@@ -16,7 +16,7 @@ class DefaultConfig(object):
 	TOKEN_EXPIRE_TIME = 3600 * 5
 
 	# CACHE
-	CACHE_TYPE = 'filesystem'
+	CACHE_TYPE = 'redis'
 	CACHE_DEFAULT_TIMEOUT = 10
 	CACHE_THRESHOLD = 100
 	CACHE_DIR = os.path.join(data_dir, 'cache')
