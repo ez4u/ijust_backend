@@ -13,7 +13,6 @@ class DefaultConfig(object):
 	DEFAULT_APP_NAME = 'ijust'
 	DEBUG = True
 	TESTING = True
-	SECRET_KEY = 'babyknight'
 	TOKEN_EXPIRE_TIME = 3600 * 5
 
 	# CACHE
@@ -28,7 +27,6 @@ class DefaultConfig(object):
 
 
 class DevelopmentConfig(DefaultConfig):
-	SECRET_KEY = 'Sm9obiBTY2hyb20ga2lja3MgYXNz'
 	TESTING = False
 
 
