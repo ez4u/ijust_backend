@@ -6,3 +6,4 @@ good==0.0.7-0
 Flask-SQLAlchemy==1.0
 passlib==1.6.1
 redis==2.10.5
+pyresttest==1.7.1
