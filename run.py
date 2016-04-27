@@ -36,7 +36,7 @@ def get_parser():
 	parser.add_argument(
 			'--test-all', help='test all resources', required=False, action='store_true')
 	parser.add_argument(
-			'--test-one', help='test selected resource', metavar='RESOURCE', dest='resource', required=False, type=str, nargs=1)
+			'--test-one', help='test resource', metavar='RESOURCE', dest='resource', required=False, type=str, nargs=1)
 	return parser
 
 
@@ -77,13 +77,15 @@ def drop_database():
 
 
 
-def test_all():
-	pass
-
-
-
-def test_one(resource):
-	pass
+def test(resource=None):
+	try:
+		import pyresttest
+	except ImportError:
+		print ' *** please install/update requirements or fix the problem ***'
+		traceback.print_exc(file=sys.stdout)
+		exit(0)
+	from tests import run
+	run(resource)
 
 
 
@@ -100,9 +102,9 @@ if __name__ == '__main__':
 		drop_database()
 
 	elif args.test_all:
-		test_all()
+		test()
 	elif args.resource:
-		test_one(args.resource[0])
+		test(args.resource[0])
 
 	elif args.run:
 		# project imports
