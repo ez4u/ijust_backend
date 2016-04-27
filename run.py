@@ -27,10 +27,16 @@ def get_parser():
 			'-cf', '--config-file', help='import local config file', metavar='CONFIG_FILE', dest='conf_file', required=False, type=str, nargs=1)
 	parser.add_argument(
 			'-u', '--update', help='update requirements', required=False, action='store_true')
+
 	parser.add_argument(
 			'-crdb', '--create-database', help='create database', required=False, action='store_true')
 	parser.add_argument(
 			'-drdb', '--drop-database', help='drop database', required=False, action='store_true')
+
+	parser.add_argument(
+			'--test-all', help='test all resources', required=False, action='store_true')
+	parser.add_argument(
+			'--test-one', help='test selected resource', metavar='RESOURCE', dest='resource', required=False, type=str, nargs=1)
 	return parser
 
 
@@ -48,10 +54,6 @@ def import_local_config_file(filename):
 	if not os.path.isabs(filename):
 		filename = os.path.join(os.getcwd(), filename)
 	configure_app(app, filename, is_pyfile=True)
-
-
-def test():
-	pass
 
 
 def update_requirements():
@@ -74,16 +76,33 @@ def drop_database():
 		db.session.commit()
 
 
+
+def test_all():
+	pass
+
+
+
+def test_one(resource):
+	pass
+
+
+
 if __name__ == '__main__':
 	parser = get_parser()
 	args = parser.parse_args()
 
 	if args.update:
 		update_requirements()
+
 	elif args.create_database:
 		create_database()
 	elif args.drop_database:
 		drop_database()
+
+	elif args.test_all:
+		test_all()
+	elif args.resource:
+		test_one(args.resource[0])
 
 	elif args.run:
 		# project imports
