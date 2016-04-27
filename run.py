@@ -30,7 +30,7 @@ def get_parser():
 	parser.add_argument(
 			'-crdb', '--create-database', help='create database', required=False, action='store_true')
 	parser.add_argument(
-			'-drdb', '--drop-database', help='create database', required=False, action='store_true')
+			'-drdb', '--drop-database', help='drop database', required=False, action='store_true')
 	return parser
 
 
