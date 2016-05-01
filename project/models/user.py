@@ -10,11 +10,11 @@ from project.extensions import db
 class User(db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(32), unique=True)
-    email = db.Column(db.String(32), unique=True)
-    password = db.Column(db.String(128))
-    firstname = db.Column(db.String(32))
-    lastname = db.Column(db.String(32))
+    username = db.Column(db.String(32), unique=True, nullable=False)
+    email = db.Column(db.String(32), unique=True, nullable=False)
+    password = db.Column(db.String(128), nullable=False)
+    firstname = db.Column(db.String(32), nullable=False, default='')
+    lastname = db.Column(db.String(32), nullable=False, default='')
 
 
     def hash_password(self, password):
@@ -27,6 +27,9 @@ class User(db.Model):
 
 
     def to_json(self):
-        return dict(email=self.email,
+        return dict(id=self.id,
+                    username=self.username,
+                    email=self.email,
                     firstname=self.firstname,
                     lastname=self.lastname)
+
