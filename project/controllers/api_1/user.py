@@ -23,7 +23,7 @@ from sqlalchemy.exc import IntegrityError
 @app.api_route('/user/', methods=['GET'])
 @login_required
 def get_current_user_profile():
-	"""
+    """
     Get Current User Profile
     ---
     tags:
@@ -52,10 +52,10 @@ def get_current_user_profile():
               description: Lastname of current user
       401:
         description: Token is invalid or has expired
-	"""
+    """
 
-	user_obj = User.query.get(g.token_data['user_id'])
-	return jsonify(user_obj.to_json()), 200
+    user_obj = User.query.get(g.token_data['user_id'])
+    return jsonify(user_obj.to_json()), 200
 
 
 #############################################################################
@@ -63,7 +63,7 @@ def get_current_user_profile():
 
 @app.api_route('/user/<string:username>/', methods=['GET'])
 def get_user_profile(username):
-	"""
+    """
     Get An User Profile
     ---
     tags:
@@ -80,12 +80,12 @@ def get_user_profile(username):
           $ref: "#/definitions/api_1_user_get_current_user_profile_get_UserProfile"
       404:
         description: User does not exist
-	"""
+    """
 
-	user_obj = User.query.filter_by(username=username).first()
-	if not user_obj:
-		return jsonify(errors='user does not exist'), 404
-	return jsonify(user_obj.to_json()), 200
+    user_obj = User.query.filter_by(username=username).first()
+    if not user_obj:
+        return jsonify(errors='user does not exist'), 404
+    return jsonify(user_obj.to_json()), 200
 
 
 ###############################  Login  #####################################
@@ -95,7 +95,7 @@ def get_user_profile(username):
 @app.api_route('/user/login/', methods=['POST'])
 @api_validate_schema('user.login_schema')
 def login():
-	"""
+    """
     Login
     ---
     tags:
@@ -128,28 +128,28 @@ def login():
               type: string
               description: Generated RESTful token
       400:
-      	description: Bad request
+          description: Bad request
       404:
         description: User does not exist
       406:
-      	description: Wrong password
-	"""
+          description: Wrong password
+    """
 
-	data = request.json
-	login = data['login']
-	password = data['password']
+    data = request.json
+    login = data['login']
+    password = data['password']
 
-	if '@' in login:
-		user_obj = User.query.filter_by(email=login).first()
-	else:
-		user_obj = User.query.filter_by(username=login).first()
+    if '@' in login:
+        user_obj = User.query.filter_by(email=login).first()
+    else:
+        user_obj = User.query.filter_by(username=login).first()
 
-	if not user_obj:
-		return jsonify(errors='user does not exist'), 404
-	if user_obj.verify_password(password):
-		return jsonify(token=generate_token(dict(user_id=user_obj.id))), 200
+    if not user_obj:
+        return jsonify(errors='user does not exist'), 404
+    if user_obj.verify_password(password):
+        return jsonify(token=generate_token(dict(user_id=user_obj.id))), 200
 
-	return jsonify(errors='wrong password'), 406
+    return jsonify(errors='wrong password'), 406
 
 
 ###############################  Signup  ####################################
@@ -159,7 +159,7 @@ def login():
 @app.api_route('/user/signup/', methods=['POST'])
 @api_validate_schema('user.signup_schema')
 def signup():
-	"""
+    """
     Signup
     ---
     tags:
@@ -193,28 +193,28 @@ def signup():
       201:
         description: Successfully registered
       400:
-      	description: Bad request
+          description: Bad request
       406:
-      	description: Username or email already exist
-	"""
+          description: Username or email already exist
+    """
 
-	data = request.json
-	username = data['username']
-	email = data['email']
-	password = data['password']
+    data = request.json
+    username = data['username']
+    email = data['email']
+    password = data['password']
 
-	if User.query.filter_by(email=email).first():
-		return jsonify(errors='email already exist'), 406
+    if User.query.filter_by(email=email).first():
+        return jsonify(errors='email already exist'), 406
 
-	try:
-		user_obj = User(username=username, email=email)
-		user_obj.hash_password(password)
-		db.session.add(user_obj)
-		db.session.commit()
-	except IntegrityError:
-		return jsonify(errors='username already exist'), 406
+    try:
+        user_obj = User(username=username, email=email)
+        user_obj.hash_password(password)
+        db.session.add(user_obj)
+        db.session.commit()
+    except IntegrityError:
+        return jsonify(errors='username already exist'), 406
 
-	return '', 201
+    return '', 201
 
 
 ###############################  Logout  ####################################
@@ -254,7 +254,7 @@ def logout():
 @api_validate_schema('user.edit_schema')
 @login_required
 def edit():
-	"""
+    """
     Edit Current User Profile
     ---
     tags:
@@ -283,40 +283,40 @@ def edit():
               schema:
                 id: UserChangePassword
                 properties:
-    	            old:
-    	              type: string
-    	              example: baby123
-    	              minLength: 3
-    	              maxLength: 32
-    	            new:
-    	              type: string
-    	              example: baby321
-    	              minLength: 3
-    	              maxLength: 32
+                    old:
+                      type: string
+                      example: baby123
+                      minLength: 3
+                      maxLength: 32
+                    new:
+                      type: string
+                      example: baby321
+                      minLength: 3
+                      maxLength: 32
     responses:
       200:
         description: Successfully edited
       400:
-      	description: Bad request
+          description: Bad request
       406:
-      	description: Not acceptable
-	"""
+          description: Not acceptable
+    """
 
-	data = request.json
-	user_obj = User.query.get(g.token_data['user_id'])
+    data = request.json
+    user_obj = User.query.get(g.token_data['user_id'])
 
-	if 'password' in data:
-		old = data['password']['old']
-		new = data['password']['new']
-		data.pop('password')
+    if 'password' in data:
+        old = data['password']['old']
+        new = data['password']['new']
+        data.pop('password')
 
-		if not user_obj.verify_password(old):
-			return '', 406
-		user_obj.hash_password(new)
+        if not user_obj.verify_password(old):
+            return '', 406
+        user_obj.hash_password(new)
 
-	if len(data):
-		user_obj.query.update(data)
-	db.session.commit()
+    if len(data):
+        user_obj.query.update(data)
+    db.session.commit()
 
-	return '', 200
+    return '', 200
 
