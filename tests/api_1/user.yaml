@@ -1,0 +1,169 @@
+---
+- config:
+  - testset: TestUser
+  - generators:
+    - 'randuser': {type: 'random_text', min_length: 1, max_length: 32}
+    - 'randpass': {type: 'random_text', min_length: 3, max_length: 32}
+
+- test:
+  - name: ViewWithoutLogin
+  - group: api_1.user
+  - headers: {'Content-Type': 'application/json'}
+  - url: '/api/v1/user/'
+  - method: GET
+  - expected_status: [401]
+
+- test:
+  - generator_binds: {randuser: randuser, randpass: randpass}
+  - name: LoginWithoutSignup
+  - group: api_1.user
+  - headers: {'Content-Type': 'application/json'}
+  - url: '/api/v1/user/login/'
+  - method: POST
+  - body: {template: '{"login": "$randuser", "password": "$randpass"}'}
+  - expected_status: [404]
+
+- test:
+  - name: SignupShortPassword
+  - group: api_1.user
+  - headers: {'Content-Type': 'application/json'}
+  - url: '/api/v1/user/signup/'
+  - method: POST
+  - body: {template: '{"username": "$randuser", "email": "$randuser@test.com", "password": "1"}'}
+  - expected_status: [400]
+
+- test:
+  - name: SignupLongPassword
+  - group: api_1.user
+  - headers: {'Content-Type': 'application/json'}
+  - url: '/api/v1/user/signup/'
+  - method: POST
+  - body: {template: '{"username": "$randuser", "email": "$randuser@test.com", "password": "123456789012345678901234567890123"}'}
+  - expected_status: [400]
+
+- test:
+  - name: Signup
+  - group: api_1.user
+  - headers: {'Content-Type': 'application/json'}
+  - url: '/api/v1/user/signup/'
+  - method: POST
+  - body: {template: '{"username": "$randuser", "email": "$randuser@test.com", "password": "$randpass"}'}
+  - expected_status: [201]
+
+- test:
+  - name: ReSignup
+  - group: api_1.user
+  - headers: {'Content-Type': 'application/json'}
+  - url: '/api/v1/user/signup/'
+  - method: POST
+  - body: {template: '{"username": "$randuser", "email": "$randuser@test.com", "password": "$randpass"}'}
+  - expected_status: [406]
+
+- test:
+  - name: Login
+  - group: api_1.user
+  - headers: {'Content-Type': 'application/json'}
+  - url: '/api/v1/user/login/'
+  - method: POST
+  - body: {template: '{"login": "$randuser", "password": "$randpass"}'}
+  - expected_status: [200]
+  - extract_binds:
+    - 'TOKEN': {jsonpath_mini: 'token'}
+
+- test:
+  - name: View
+  - group: api_1.user
+  - headers: {template: {'Content-Type': 'application/json', 'TOKEN': '$TOKEN'}}
+  - url: '/api/v1/user/'
+  - method: GET
+  - expected_status: [200]
+
+- test:
+  - name: ViewUnregisteredUser
+  - group: api_1.user
+  - generator_binds: {username: randuser}
+  - headers: {template: {'Content-Type': 'application/json'}}
+  - url: {template: '/api/v1/user/$username/'}
+  - method: GET
+  - expected_status: [404]
+
+- test:
+  - name: ViewRegisteredUser
+  - group: api_1.user
+  - headers: {template: {'Content-Type': 'application/json'}}
+  - url: {template: '/api/v1/user/$randuser/'}
+  - method: GET
+  - expected_status: [200]
+
+- test:
+  - name: Logout
+  - group: api_1.user
+  - headers: {template: {'Content-Type': 'application/json', 'TOKEN': '$TOKEN'}}
+  - url: '/api/v1/user/logout/'
+  - method: POST
+  - expected_status: [200]
+
+- test:
+  - name: ViewAfterLogout
+  - group: api_1.user
+  - headers: {template: {'Content-Type': 'application/json', 'TOKEN': '$TOKEN'}}
+  - url: '/api/v1/user/'
+  - method: GET
+  - expected_status: [401]
+
+- test:
+  - name: LoginAfterLogout
+  - group: api_1.user
+  - headers: {'Content-Type': 'application/json'}
+  - url: '/api/v1/user/login/'
+  - method: POST
+  - body: {template: '{"login": "$randuser", "password": "$randpass"}'}
+  - expected_status: [200]
+  - extract_binds:
+    - 'TOKEN': {jsonpath_mini: 'token'}
+
+- test:
+  - name: Edit
+  - group: api_1.user
+  - headers: {template: {'Content-Type': 'application/json', 'TOKEN': '$TOKEN'}}
+  - url: '/api/v1/user/'
+  - method: PUT
+  - body: '{"firstname": "baby", "lastname": "knight"}'
+  - expected_status: [200]
+
+- test:
+  - name: ViewEditedProfile
+  - group: api_1.user
+  - headers: {template: {'Content-Type': 'application/json', 'TOKEN': '$TOKEN'}}
+  - url: '/api/v1/user/'
+  - method: GET
+  - expected_status: [200]
+  - validators:
+    - compare: {jsonpath_mini: 'firstname', expected: 'baby',
+                jsonpath_mini: 'lastname', expected: 'knight'}
+
+- test:
+  - name: EditPassword
+  - group: api_1.user
+  - headers: {template: {'Content-Type': 'application/json', 'TOKEN': '$TOKEN'}}
+  - url: '/api/v1/user/'
+  - method: PUT
+  - body: {template: '{"password": {"old": "$randpass", "new": "new_pass"}}'}
+  - expected_status: [200]
+
+- test:
+  - name: LoginAfterChangingPassword
+  - group: api_1.user
+  - headers: {'Content-Type': 'application/json'}
+  - url: '/api/v1/user/login/'
+  - method: POST
+  - body: {template: '{"login": "$randuser", "password": "new_pass"}'}
+  - expected_status: [200]
+
+- test:
+  - name: LogoutWithOldToken
+  - group: api_1.user
+  - headers: {template: {'Content-Type': 'application/json', 'TOKEN': '$TOKEN'}}
+  - url: '/api/v1/user/logout/'
+  - method: POST
+  - expected_status: [200]
