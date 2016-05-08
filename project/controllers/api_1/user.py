@@ -7,6 +7,7 @@ from project.utils.validators import api_validate_schema
 
 from project.extensions import db
 from project.models.user import User
+from project.models.team import Team
 
 # flask imports
 from flask import request, jsonify, g
@@ -41,6 +42,12 @@ def get_current_user_profile():
           id: UserProfile
           type: object
           properties:
+            id:
+              type: integer
+              description: Id of current user in database
+            username:
+              type: string
+              description: Username of current user
             email:
               type: string
               description: Email of current user
