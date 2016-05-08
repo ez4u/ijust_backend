@@ -63,6 +63,7 @@ def update_requirements():
 def create_database():
     from project import app
     from project.extensions import db
+    import project.models
     with app.app_context():
         db.create_all()
         db.session.commit()
@@ -71,6 +72,7 @@ def create_database():
 def drop_database():
     from project import app
     from project.extensions import db
+    import project.models
     with app.app_context():
         db.drop_all()
         db.session.commit()
