@@ -7,7 +7,6 @@ from project.utils.validators import api_validate_schema
 
 from project.extensions import db
 from project.models.user import User
-from project.models.team import Team
 
 # flask imports
 from flask import request, jsonify, g
