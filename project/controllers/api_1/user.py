@@ -201,7 +201,7 @@ def signup():
       400:
           description: Bad request
       406:
-          description: Username or email already exist
+          description: Username or email already exists
     """
 
     data = request.json
@@ -210,7 +210,7 @@ def signup():
     password = data['password']
 
     if User.query.filter_by(email=email).first():
-        return jsonify(errors='email already exist'), 406
+        return jsonify(errors='email already exists'), 406
 
     try:
         user_obj = User(username=username, email=email)
@@ -218,7 +218,7 @@ def signup():
         db.session.add(user_obj)
         db.session.commit()
     except IntegrityError:
-        return jsonify(errors='username already exist'), 406
+        return jsonify(errors='username already exists'), 406
 
     return '', 201
 
